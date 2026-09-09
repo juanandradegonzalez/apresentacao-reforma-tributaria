@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rarotec - Ecossistema SIAFIC V3 (Corrigido)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #020617;
+            --primary: #0ea5e9;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+        }
+
+        /* Fundo Móvel Animado */
+        .dynamic-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200vw;
+            height: 200vh;
+            background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 60%), 
+                        linear-gradient(45deg, rgba(14, 165, 233, 0.03) 25%, transparent 25%, transparent 75%, rgba(14, 165, 233, 0.03) 75%, rgba(14, 165, 233, 0.03)), 
+                        linear-gradient(45deg, rgba(14, 165, 233, 0.03) 25%, transparent 25%, transparent 75%, rgba(14, 165, 233, 0.03) 75%, rgba(14, 165, 233, 0.03));
+            background-size: 100% 100%, 80px 80px, 80px 80px;
+            background-position: 0 0, 0 0, 40px 40px;
+            animation: moveBg 90s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes moveBg {
+            0% { transform: rotate(0deg) translate(0, 0); }
+            50% { transform: rotate(180deg) translate(-2%, -2%); }
+            100% { transform: rotate(360deg) translate(0, 0); }
+        }
+
+        .header {
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            z-index: 10;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Sistema Solar */
+        .solar-system {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            height: 900px;
+            z-index: 5;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #0ea5e9, #0284c7, #0369a1);
+            border-radius: 50%;
+            box-shadow: 0 0 80px rgba(14, 165, 233, 0.5), inset 0 0 30px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .sun:hover {
+            box-shadow: 0 0 120px rgba(14, 165, 233, 0.8), inset 0 0 30px rgba(255,255,255,0.9);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            box-sizing: border-box;
+            pointer-events: none; /* CORREÇÃO AQUI: Deixa o clique passar pelos quadrados das órbitas */
+        }
+
+        /* 6 Órbitas */
+        .orbit-1 { width: 280px; height: 280px; animation: spin 25s linear infinite; }
+        .orbit-2 { width: 400px; height: 400px; animation: spin 35s linear infinite reverse; }
+        .orbit-3 { width: 520px; height: 520px; animation: spin 45s linear infinite; }
+        .orbit-4 { width: 640px; height: 640px; animation: spin 55s linear infinite reverse; }
+        .orbit-5 { width: 760px; height: 760px; animation: spin 65s linear infinite; }
+        .orbit-6 { width: 880px; height: 880px; animation: spin 75s linear infinite reverse; }
+
+        @keyframes spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .planet-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Contra-rotação */
+        .orbit-1 .planet-container { animation: counter-spin 25s linear infinite reverse; }
+        .orbit-2 .planet-container { animation: counter-spin 35s linear infinite; }
+        .orbit-3 .planet-container { animation: counter-spin 45s linear infinite reverse; }
+        .orbit-4 .planet-container { animation: counter-spin 55s linear infinite; }
+        .orbit-5 .planet-container { animation: counter-spin 65s linear infinite reverse; }
+        .orbit-6 .planet-container { animation: counter-spin 75s linear infinite; }
+
+        @keyframes counter-spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .planet {
+            width: 65px;
+            height: 65px;
+            background: #0f172a;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(14, 165, 233, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            pointer-events: auto; /* CORREÇÃO AQUI: Restaura o clique apenas nos planetas */
+        }
+
+        .planet:hover {
+            background: var(--primary);
+            transform: scale(1.2);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .planet span {
+            position: absolute;
+            top: 75px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+        
+        .planet-icon { font-size: 1.5rem; }
+
+        /* Painel Lateral de Conteúdo */
+        .info-panel {
+            position: absolute;
+            top: 0;
+            right: -650px;
+            width: 550px;
+            height: 100vh;
+            background: var(--panel-bg);
+            backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(14, 165, 233, 0.2);
+            padding: 60px 50px;
+            box-sizing: border-box;
+            transition: right 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 200;
+            overflow-y: auto;
+            box-shadow: -30px 0 60px rgba(0,0,0,0.6);
+        }
+
+        .info-panel.active { right: 0; }
+
+        .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-btn:hover { background: var(--danger); border-color: var(--danger); transform: rotate(90deg); }
+
+        .panel-content h2 {
+            font-size: 2.2rem;
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(14, 165, 233, 0.3);
+        }
+        
+        .tech-tag {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 15px;
+            background: rgba(14, 165, 233, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        /* Estilos Ricos para o Painel */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border-top: 3px solid var(--primary);
+        }
+        .stat-card.green { border-top-color: var(--success); }
+        .stat-card.red { border-top-color: var(--danger); }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 5px 0 0 0;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Gráfico de Barras CSS */
+        .bar-chart-container {
+            margin-top: 25px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .bar-row { margin-bottom: 15px; }
+        .bar-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; font-weight: 600;}
+        .bar-track { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 6px; }
+
+        /* Lista de Status Terminal */
+        .terminal-list {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        .terminal-list div { margin-bottom: 8px; }
+        .color-green { color: var(--success); }
+        .color-red { color: var(--danger); }
+        .color-blue { color: var(--accent); }
+
+    </style>
+</head>
+<body>
+
+    <div class="dynamic-bg"></div>
+
+    <div class="header">
+        <h1>RAROTEC</h1>
+        <p>Ecossistema Tributário Integrado</p>
+    </div>
+
+    <!-- Sistema Solar -->
+    <div class="solar-system">
+        <div class="sun" onclick="showPanel('siafic')">SIAFIC</div>
+
+        <!-- Órbita 1: Cadastro -->
+        <div class="orbit orbit-1">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('cadastro')">
+                    <div class="planet-icon">📁</div>
+                    <span>Cadastro</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órbita 2: Tributos -->
+        <div class="orbit orbit-2">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('tributos')">
+                    <div class="planet-icon">⚖️</div>
+                    <span>Tributos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órbita 3: NFS-e -->
+        <div class="orbit orbit-3">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('nfse')">
+                    <div class="planet-icon">🧾</div>
+                    <span>NFS-e</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órbita 4: Arrecadação (Case Tacaratu) -->
+        <div class="orbit orbit-4">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('arrecadacao')">
+                    <div class="planet-icon">📈</div>
+                    <span>Arrecadação</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órbita 5: Portal do Cidadão -->
+        <div class="orbit orbit-5">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('cidadao')">
+                    <div class="planet-icon">👤</div>
+                    <span>Portal do Cidadão</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Órbita 6: Transparência / Reforma -->
+        <div class="orbit orbit-6">
+            <div class="planet-container">
+                <div class="planet" onclick="showPanel('reforma')">
+                    <div class="planet-icon">🏛️</div>
+                    <span>Reforma</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel Lateral -->
+    <div class="info-panel" id="sidePanel">
+        <button class="close-btn" onclick="closePanel()">×</button>
+        <div id="panelContent" class="panel-content">
+            <!-- Conteúdo Injetado via JS -->
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+            'siafic': `
+                <span class="tech-tag">> module_core_siafic.exe</span>
+                <h2>SIAFIC: O Sol do Sistema</h2>
+                <p>O município do futuro começa com bases estruturadas e dados confiáveis.</p>
+                <p>O ERP da Rarotec possui <strong>mais de 15 soluções nativamente integradas</strong>. O SIAFIC atua como a força gravitacional, garantindo que nada se perca no espaço.</p>
+                
+                <div class="terminal-list">
+                    <div class="color-blue">> INICIANDO DIAGNÓSTICO DE INTEGRAÇÃO...</div>
+                    <div>[✓] Módulo Contábil <span class="color-green">ONLINE</span></div>
+                    <div>[✓] Módulo Tributário <span class="color-green">ONLINE</span></div>
+                    <div>[✓] Portal de Transparência <span class="color-green">ONLINE</span></div>
+                    <div>[✓] Dívida Ativa <span class="color-green">SINCRONIZADO</span></div>
+                    <br>
+                    <div class="color-blue">> STATUS GERAL: Nativamente Integrado.</div>
+                </div>
+            `,
+            'cadastro': `
+                <span class="tech-tag">> database_hygiene.sql</span>
+                <h2>O Passo Zero: Cadastro</h2>
+                <p><strong>Dados ruins geram decisões ruins.</strong> A base de tudo é manter cadastros imobiliários e mobiliários 100% integrados e atualizados.</p>
+                
+                <div class="bar-chart-container">
+                    <h3 style="margin-top:0; font-size:1.1rem;">Rotina de Higienização Automática:</h3>
+                    
+                    <div style="display:flex; align-items:center; margin-top:15px;">
+                        <span style="font-size:1.2rem; margin-right:15px;">🧹</span>
+                        <div>
+                            <strong>Limpeza de Duplicidades</strong><br>
+                            <span style="font-size:0.85rem; color:#94a3b8;">Fusão de CPFs/CNPJs duplicados na base.</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; margin-top:15px;">
+                        <span style="font-size:1.2rem; margin-right:15px;">📍</span>
+                        <div>
+                            <strong>Correção de Endereçamentos</strong><br>
+                            <span style="font-size:0.85rem; color:#94a3b8;">Padronização de logradouros e bairros.</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-top:15px;">
+                        <span style="font-size:1.2rem; margin-right:15px;">🗑️</span>
+                        <div>
+                            <strong>Dívidas Irreais (Filtro)</strong><br>
+                            <span style="font-size:0.85rem; color:#94a3b8;">Identificação de prescrições e cobranças indevidas.</span>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'tributos': `
+                <span class="tech-tag">> tax_management_v2</span>
+                <h2>Gestão Tributária</h2>
+                <p>Como transformamos o cenário atual dos municípios em uma gestão inteligente.</p>
+                
+                <div class="dashboard-grid">
+                    <div class="stat-card red" style="border-top-width: 4px;">
+                        <span style="font-size: 0.85rem; text-transform:uppercase; color:#ef4444; font-weight:bold;">O Problema</span>
+                        <p style="font-size: 0.95rem; margin-top:10px;">Sistemas isolados, cobranças irreais que travam a gestão e sujam a base, dificultando decisões.</p>
+                    </div>
+                    <div class="stat-card green" style="border-top-width: 4px;">
+                        <span style="font-size: 0.85rem; text-transform:uppercase; color:#10b981; font-weight:bold;">Solução Rarotec</span>
+                        <p style="font-size: 0.95rem; margin-top:10px;">Arrecadação Ativa: Captação organizada e identificação imediata de oportunidades tributárias.</p>
+                    </div>
+                </div>
+            `,
+            'nfse': `
+                <span class="tech-tag">> api_nfse_live</span>
+                <h2>Nota Fiscal Eletrônica</h2>
+                <p>Agilidade para o contribuinte, controle absoluto para o fisco.</p>
+                <div class="stat-card">
+                    <h3 style="margin-top:0; font-size:1.1rem;">Motor de Inteligência:</h3>
+                    <ul style="padding-left: 20px; font-size:0.95rem; line-height:1.6;">
+                        <li><strong>Malha Fiscal Automática:</strong> Cruzamento de dados instantâneo.</li>
+                        <li><strong>App Mobile:</strong> Emissão facilitada na palma da mão.</li>
+                        <li><strong>Integração Bancária:</strong> Baixa automática via PIX/Boletos.</li>
+                        <li><strong>Alerta de Sonegação:</strong> Identificação de quedas bruscas de faturamento.</li>
+                    </ul>
+                </div>
+            `,
+            'arrecadacao': `
+                <span class="tech-tag">> case_study: tacaratu_pe</span>
+                <h2>Resultados na Prática</h2>
+                <p>Implantação do sistema Tributário Rarotec e higienização de base em Tacaratu/PE a partir de Set/2021.</p>
+                
+                <div class="bar-chart-container">
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#ef4444;">Antes (Até Set/2021)</span>
+                            <span>R$ 1.3 Mi</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 24%; background: #ef4444;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bar-row" style="margin-top: 25px;">
+                        <div class="bar-label">
+                            <span style="color:#10b981;">Exercício de 2022</span>
+                            <span style="font-size: 1.2rem;">R$ 5.4 Mi</span>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: 100%; background: #10b981; box-shadow: 0 0 10px #10b981;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="font-size:0.9rem; text-align:center; color:#94a3b8; margin-top:20px;">
+                    Crescimento expressivo gerado puramente por gestão baseada em dados, sem aumento de alíquotas.
+                </p>
+            `,
+            'cidadao': `
+                <span class="tech-tag">> portal_autoatendimento</span>
+                <h2>Portal do Cidadão</h2>
+                <p>A prefeitura aberta 24 horas por dia, 7 dias por semana.</p>
+                <div class="dashboard-grid">
+                    <div class="stat-card" style="text-align:center;">
+                        <span style="font-size: 2.5rem;">📉</span>
+                        <p style="font-size: 0.9rem; margin-top:10px;">Fim das Filas no Setor de Tributos</p>
+                    </div>
+                    <div class="stat-card" style="text-align:center;">
+                        <span style="font-size: 2.5rem;">📱</span>
+                        <p style="font-size: 0.9rem; margin-top:10px;">Acesso Rápido a Guias e Certidões</p>
+                    </div>
+                </div>
+                <p style="font-size:0.95rem; margin-top:20px;">O cidadão resolve suas pendências de IPTU, ISS e Alvarás diretamente de casa, aumentando a velocidade de arrecadação do município.</p>
+            `,
+            'reforma': `
+                <span class="tech-tag">> future_ready</span>
+                <h2>A Reforma Tributária</h2>
+                <p>Quem vai largar na frente? A Reforma trará profundas mudanças sistêmicas e o período de transição já começou.</p>
+                
+                <div class="terminal-list">
+                    <div class="color-blue">VERIFICAÇÃO DE PRONTIDÃO:</div>
+                    <div>[✓] Bases cadastrais higienizadas</div>
+                    <div>[✓] Sistemas nativamente integrados</div>
+                    <div>[✓] Automação de prestação de contas</div>
+                </div>
+
+                <div class="stat-card" style="margin-top:25px; text-align:center; background:rgba(14, 165, 233, 0.1); border-color:var(--primary);">
+                    <h3 style="margin:0 0 10px 0; color:#fff;">Vamos transformar seu município?</h3>
+                    <p style="margin:0; font-family:'Fira Code', monospace; font-size:0.95rem;">comercial@rarotec.com.br<br>(81) 9277-9333</p>
+                </div>
+            `
+        };
+
+        const panel = document.getElementById('sidePanel');
+        const panelContent = document.getElementById('panelContent');
+
+        function showPanel(moduleId) {
+            panelContent.innerHTML = contentData[moduleId];
+            panel.classList.add('active');
+        }
+
+        function closePanel() {
+            panel.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
